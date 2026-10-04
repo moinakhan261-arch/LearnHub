@@ -1,24 +1,60 @@
+
 function Sidebar({ lessons, selectedLesson, setSelectedLesson }) {
   return (
-    <aside className="w-full md:w-64 bg-white rounded-xl shadow-md p-5">
+    <aside className="h-fit w-full rounded-2xl bg-white p-5 shadow-sm md:sticky md:top-6 md:w-72">
 
-      <h2 className="text-xl font-bold text-gray-800 mb-4">
-        Course Lessons
-      </h2>
+      {/* Header */}
+      <div className="mb-5 border-b border-gray-100 pb-4">
 
+        <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+          Course Content
+        </p>
+
+        <h2 className="mt-1 text-xl font-bold text-gray-900">
+          Course Lessons
+        </h2>
+
+        <p className="mt-1 text-sm text-gray-500">
+          {lessons.length} lessons
+        </p>
+
+      </div>
+
+      {/* Lessons */}
       <div className="space-y-2">
-        {lessons.map((lesson) => (
+
+        {lessons.map((lesson, index) => (
+
           <button
             key={lesson}
             onClick={() => setSelectedLesson(lesson)}
-            className={`w-full text-left p-3 rounded-lg ${
-  selectedLesson === lesson
-    ? "bg-blue-100 text-blue-600 font-semibold"
-    : "bg-gray-100 text-gray-700 hover:bg-blue-50"
-}`}  >
-            {lesson}
+            className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition duration-200 ${
+              selectedLesson === lesson
+                ? "bg-blue-600 text-white shadow-sm"
+                : "bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+            }`}
+          >
+
+            {/* Lesson Number */}
+            <span
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${
+                selectedLesson === lesson
+                  ? "bg-white text-blue-600"
+                  : "bg-white text-gray-500 shadow-sm"
+              }`}
+            >
+              {index + 1}
+            </span>
+
+            {/* Lesson Name */}
+            <span className="font-medium">
+              {lesson}
+            </span>
+
           </button>
+
         ))}
+
       </div>
 
     </aside>
@@ -26,3 +62,4 @@ function Sidebar({ lessons, selectedLesson, setSelectedLesson }) {
 }
 
 export default Sidebar
+

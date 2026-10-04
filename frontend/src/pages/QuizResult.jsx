@@ -5,11 +5,16 @@ function QuizResult() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const { score = 0, total = 0 } = location.state || {}
+  const {
+    score = 0,
+    total = 0,
+    courseId
+  } = location.state || {}
 
-  const percentage = total > 0
-    ? Math.round((score / total) * 100)
-    : 0
+  const percentage =
+    total > 0
+      ? Math.round((score / total) * 100)
+      : 0
 
   let message = ""
 
@@ -24,44 +29,58 @@ function QuizResult() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-6 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-6 py-12">
 
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-sm p-8 text-center">
+      <div className="w-full max-w-lg rounded-2xl bg-white p-8 text-center shadow-lg">
 
-        <div className="mx-auto w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center">
-          <span className="text-3xl font-bold text-blue-600">
+        {/* Result Icon */}
+        <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-blue-50">
+
+          <span className="text-2xl font-extrabold text-blue-600">
             {percentage}%
           </span>
+
         </div>
 
-        <h1 className="mt-6 text-3xl font-bold text-gray-800">
+        {/* Heading */}
+        <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-blue-600">
+          LearnHub Assessment
+        </p>
+
+        <h1 className="mt-2 text-3xl font-extrabold text-gray-900">
           Quiz Completed!
         </h1>
 
-        <p className="mt-3 text-gray-600">
+        <p className="mt-4 text-gray-500">
           You scored
         </p>
 
-        <p className="mt-2 text-2xl font-bold text-blue-600">
+        <p className="mt-1 text-3xl font-extrabold text-blue-600">
           {score} / {total}
         </p>
 
-        <p className="mt-5 text-gray-600">
-          {message}
-        </p>
+        {/* Message */}
+        <div className="mt-6 rounded-xl bg-gray-50 p-4">
 
-        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <p className="leading-6 text-gray-600">
+            {message}
+          </p>
+
+        </div>
+
+        {/* Navigation */}
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
 
           <button
-            onClick={() => navigate(-1)}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+            onClick={() => navigate(`/courses/${courseId}/learn`)}
+            className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
           >
-            Back to Course
+            ← Back to Course
           </button>
 
           <button
             onClick={() => navigate("/my-learning")}
-           className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50"
+            className="flex-1 rounded-lg border border-gray-300 px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
           >
             My Learning
           </button>
@@ -75,3 +94,4 @@ function QuizResult() {
 }
 
 export default QuizResult
+

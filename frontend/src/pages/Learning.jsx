@@ -1,10 +1,11 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import courses from '../data/courses';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Sidebar from '../components/Sidebar';
-import Modal from '../components/Modal';
-import Quiz from './Quiz';
+
+import { useParams, useNavigate } from 'react-router-dom'
+import courses from '../data/courses'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import Sidebar from '../components/Sidebar'
+import Modal from '../components/Modal'
+import Quiz from './Quiz'
 
 const lessonContent = {
   1: {
@@ -39,161 +40,316 @@ const lessonContent = {
     "DOM Manipulation": "Learn how JavaScript can access and modify elements on a webpage.",
     Events: "Learn how JavaScript responds to user actions such as clicks and form submissions."
   }
-};
+}
 
 function Learning() {
-  const [completedLessons, setCompletedLessons] = useState([]);
-  const [selectedLesson, setSelectedLesson] = useState("Introduction");
-  const [showQuiz, setShowQuiz] = useState(false);
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [isEnrolled, setIsEnrolled] = useState(null);
+  const [completedLessons, setCompletedLessons] = useState([])
+  const [selectedLesson, setSelectedLesson] = useState("Introduction")
+  const [showQuiz, setShowQuiz] = useState(false)
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [isEnrolled, setIsEnrolled] = useState(null)
 
-  const course = courses.find((course) => course.id === Number(id));
+  const course = courses.find(
+    (course) => course.id === Number(id)
+  )
 
   useEffect(() => {
     const checkEnrollment = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/enrollments', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const token = localStorage.getItem('token')
+
+        const response = await axios.get(
+          'http://localhost:5000/api/enrollments',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+
         const enrolled = response.data.enrollments.some(
           (enrollment) => enrollment.courseId === Number(id)
-        );
-        setIsEnrolled(enrolled);
+        )
+
+        setIsEnrolled(enrolled)
+
         if (!enrolled) {
-          navigate(`/courses/${id}`);
+          navigate(`/courses/${id}`)
         }
       } catch (error) {
-        console.error(error);
-        navigate('/courses');
+        console.error(error)
+        navigate('/courses')
       }
-    };
-    checkEnrollment();
-  }, [id, navigate]);
+    }
+
+    checkEnrollment()
+  }, [id, navigate])
 
   useEffect(() => {
-    const savedProgress = localStorage.getItem(`progress_${id}`);
-    if (savedProgress) {
-      setCompletedLessons(JSON.parse(savedProgress));
-    }
-  }, [id]);
+    const savedProgress = localStorage.getItem(`progress_${id}`)
 
-  // Guard clause if the course doesn't exist in local data array
+    if (savedProgress) {
+      setCompletedLessons(JSON.parse(savedProgress))
+    }
+  }, [id])
+
   if (!course) {
-    return <p className="text-center mt-10 text-red-500">Course not found.</p>;
+    return (
+      <p className="mt-10 text-center text-red-500">
+        Course not found.
+      </p>
+    )
   }
 
   if (isEnrolled === null) {
-    return <p className="text-center mt-10">Checking enrollment...</p>;
+    return (
+      <p className="mt-10 text-center text-gray-600">
+        Checking enrollment...
+      </p>
+    )
   }
 
-  const Lessons = course.lessonList || [];
-  const progress = Lessons.length > 0 ? (completedLessons.length / Lessons.length) * 100 : 0;
-  const currentIndex = Lessons.indexOf(selectedLesson);
+  const Lessons = course.lessonList || []
+
+  const progress =
+    Lessons.length > 0
+      ? (completedLessons.length / Lessons.length) * 100
+      : 0
+
+  const currentIndex = Lessons.indexOf(selectedLesson)
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 max-w-7xl mx-auto px-4">
-      <Sidebar 
-        lessons={Lessons} 
-        selectedLesson={selectedLesson} 
-        setSelectedLesson={setSelectedLesson} 
-      />
-      
-      <main className="flex-1">
-        <h1 className="text-4xl font-bold text-blue-600 text-center">
-          {course.title}
-        </h1>
-        <p className="text-center text-gray-600 max-w-2xl mx-auto mt-6">
-          {course.description}
-        </p>
+    <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6">
 
-        <div className="max-w-3xl mx-auto mt-8">
-          <div className="flex justify-between mb-2">
-            <span className="font-semibold text-gray-700">Course Progress</span>
-            <span className="text-gray-600">{Math.round(progress)}%</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div 
-              className="bg-blue-600 h-3 rounded-full transitions-all" 
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-        </div>
+      {/* Page Layout */}
+      <div className="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row">
 
-        <div className="max-w-3xl mx-auto mt-8 space-y-3">
-          {Lessons.map((lesson) => (
-            <button
-              key={lesson}
-              onClick={() => setSelectedLesson(lesson)}
-              className={`w-full p-4 rounded-lg shadow-sm text-left transition ${
-                completedLessons.includes(lesson)
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-white hover:bg-blue-50 hover:text-blue-600'
-              }`}
-            >
-              {lesson} {completedLessons.includes(lesson) && '✓'}
-            </button>
-          ))}
-        </div>
+        {/* Sidebar */}
+        <Sidebar
+          lessons={Lessons}
+          selectedLesson={selectedLesson}
+          setSelectedLesson={setSelectedLesson}
+        />
 
-        <div className="max-w-3xl mx-auto mt-8 bg-white p-6 rounded-xl shadow">
-          <h2 className="text-2xl font-bold text-gray-800">{selectedLesson}</h2>
-          <p className="text-gray-600 mt-3 leading-7">
-            {lessonContent[course.id]?.[selectedLesson] || "Content loading..."}
-          </p>
+        {/* Main Content */}
+        <main className="flex-1">
 
-          <div className="mt-6 bg-gray-900 h-64 rounded-xl flex items-center justify-center">
-            <p className="text-white text-lg">🎥 {selectedLesson} Tutorial</p>
+          {/* Course Header */}
+          <div className="rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+
+            <span className="rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-600">
+              {course.category}
+            </span>
+
+            <h1 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              {course.title}
+            </h1>
+
+            <p className="mt-3 max-w-3xl leading-7 text-gray-600">
+              {course.description}
+            </p>
+
           </div>
 
-          <button
-            onClick={() => {
-              if (!completedLessons.includes(selectedLesson)) {
-                const updatedLessons = [...completedLessons, selectedLesson];
-                setCompletedLessons(updatedLessons);
-                localStorage.setItem(`progress_${course.id}`, JSON.stringify(updatedLessons));
-              }
-            }}
-            className="mt-6 bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700"
+          {/* Progress */}
+          <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
+
+            <div className="mb-3 flex items-center justify-between">
+
+              <div>
+                <h2 className="font-bold text-gray-800">
+                  Your Progress
+                </h2>
+
+                <p className="mt-1 text-sm text-gray-500">
+                  {completedLessons.length} of {Lessons.length} lessons completed
+                </p>
+              </div>
+
+              <span className="text-lg font-bold text-blue-600">
+                {Math.round(progress)}%
+              </span>
+
+            </div>
+
+            <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200">
+
+              <div
+                className="h-3 rounded-full bg-blue-600 transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              ></div>
+
+            </div>
+
+          </div>
+
+          {/* Lesson Navigation */}
+          <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
+
+            <h2 className="mb-4 text-xl font-bold text-gray-900">
+              Course Lessons
+            </h2>
+
+            <div className="space-y-3">
+
+              {Lessons.map((lesson) => (
+                <button
+                  key={lesson}
+                  onClick={() => setSelectedLesson(lesson)}
+                  className={`flex w-full items-center justify-between rounded-xl border p-4 text-left transition ${
+                    selectedLesson === lesson
+                      ? 'border-blue-200 bg-blue-50 text-blue-700'
+                      : completedLessons.includes(lesson)
+                      ? 'border-green-200 bg-green-50 text-green-700'
+                      : 'border-gray-100 bg-gray-50 text-gray-700 hover:border-blue-200 hover:bg-blue-50'
+                  }`}
+                >
+
+                  <span className="font-medium">
+                    {lesson}
+                  </span>
+
+                  {completedLessons.includes(lesson) && (
+                    <span className="font-bold text-green-600">
+                      ✓
+                    </span>
+                  )}
+
+                </button>
+              ))}
+
+            </div>
+
+          </div>
+
+          {/* Selected Lesson */}
+          <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+
+            <div className="flex items-center justify-between gap-4">
+
+              <div>
+                <p className="text-sm font-semibold text-blue-600">
+                  CURRENT LESSON
+                </p>
+
+                <h2 className="mt-1 text-2xl font-bold text-gray-900">
+                  {selectedLesson}
+                </h2>
+              </div>
+
+              {completedLessons.includes(selectedLesson) && (
+                <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-700">
+                  Completed ✓
+                </span>
+              )}
+
+            </div>
+
+            <p className="mt-5 leading-8 text-gray-600">
+              {lessonContent[course.id]?.[selectedLesson] ||
+                "Content loading..."}
+            </p>
+
+            {/* Video Placeholder */}
+            <div className="mt-7 flex h-64 items-center justify-center rounded-2xl bg-gray-900">
+
+              <div className="text-center">
+                <div className="text-4xl">
+                  ▶
+                </div>
+
+                <p className="mt-3 font-medium text-white">
+                  {selectedLesson} Tutorial
+                </p>
+
+                <p className="mt-1 text-sm text-gray-400">
+                  Video lesson
+                </p>
+              </div>
+
+            </div>
+
+            {/* Actions */}
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+
+              <button
+                onClick={() => {
+                  if (!completedLessons.includes(selectedLesson)) {
+                    const updatedLessons = [
+                      ...completedLessons,
+                      selectedLesson
+                    ]
+
+                    setCompletedLessons(updatedLessons)
+
+                    localStorage.setItem(
+                      `progress_${course.id}`,
+                      JSON.stringify(updatedLessons)
+                    )
+                  }
+                }}
+                className="flex-1 rounded-lg bg-green-600 px-5 py-3 font-semibold text-white transition hover:bg-green-700"
+              >
+                {completedLessons.includes(selectedLesson)
+                  ? "Lesson Completed ✓"
+                  : "Mark as Complete"}
+              </button>
+
+              <button
+                onClick={() => setShowQuiz(true)}
+                className="flex-1 rounded-lg bg-purple-600 px-6 py-3 font-semibold text-white transition hover:bg-purple-700"
+              >
+                Take Quiz
+              </button>
+
+            </div>
+
+            {/* Previous / Next */}
+            <div className="mt-6 flex justify-between border-t border-gray-100 pt-6">
+
+              <button
+                onClick={() =>
+                  setSelectedLesson(Lessons[currentIndex - 1])
+                }
+                disabled={currentIndex === 0}
+                className="rounded-lg bg-gray-100 px-5 py-2 font-medium text-gray-700 transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                ← Previous
+              </button>
+
+              <button
+                onClick={() =>
+                  setSelectedLesson(Lessons[currentIndex + 1])
+                }
+                disabled={currentIndex === Lessons.length - 1}
+                className="rounded-lg bg-blue-600 px-5 py-2 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Next →
+              </button>
+
+            </div>
+
+          </div>
+
+          {/* Quiz Modal */}
+          <Modal
+            isOpen={showQuiz}
+            onClose={() => setShowQuiz(false)}
           >
-            Mark as Complete
-          </button>
+            <Quiz
+              courseId={course.id}
+              onClose={() => setShowQuiz(false)}
+            />
+          </Modal>
 
+        </main>
 
-         <button
-  onClick={() => setShowQuiz(true)}
-  className="mt-4 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700"
->
-  Take Quiz
-</button>
+      </div>
 
-
-          <div className="flex justify-between mt-6">
-            <button
-              onClick={() => setSelectedLesson(Lessons[currentIndex - 1])}
-              disabled={currentIndex === 0}
-              className="bg-gray-200 px-5 py-2 rounded-lg disabled:opacity-50"
-            >
-              ← Previous
-            </button>
-            <button
-              onClick={() => setSelectedLesson(Lessons[currentIndex + 1])}
-              disabled={currentIndex === Lessons.length - 1}
-              className="bg-blue-600 text-white px-5 py-2 rounded-lg disabled:opacity-50"
-            >
-              Next →
-            </button>
-          </div>
-        </div>
-
-        <Modal isOpen={showQuiz} onClose={() => setShowQuiz(false)}>
-          <Quiz courseId={course.id} onClose={() => setShowQuiz(false)} />
-        </Modal>
-      </main>
     </div>
-  );
+  )
 }
 
-export default Learning;
+export default Learning
+

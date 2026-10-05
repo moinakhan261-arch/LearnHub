@@ -9,7 +9,11 @@ function Contact() {
     message: "",
   })
 
+  const [submitted, setSubmitted] = useState(false)
+
   const handleChange = (e) => {
+    setSubmitted(false)
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -20,6 +24,8 @@ function Contact() {
     e.preventDefault()
 
     console.log("Contact form submitted:", formData)
+
+    setSubmitted(true)
 
     setFormData({
       name: "",
@@ -161,6 +167,13 @@ function Contact() {
               ></textarea>
             </div>
 
+            {submitted && (
+              <p className="text-green-600 text-sm font-medium">
+                Your message has been submitted successfully. We'll get back
+                to you soon.
+              </p>
+            )}
+
             <button
               type="submit"
               className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition"
@@ -219,3 +232,4 @@ function Contact() {
 }
 
 export default Contact
+

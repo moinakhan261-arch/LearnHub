@@ -21,13 +21,13 @@ function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-5 md:px-8">
 
         {/* Logo */}
         <Link
           to="/"
           onClick={closeMenu}
-          className="text-2xl font-extrabold tracking-tight text-blue-600"
+          className="shrink-0 text-xl font-extrabold tracking-tight text-blue-600 sm:text-2xl"
         >
           LearnHub<span className="text-gray-800">.</span>
         </Link>
@@ -35,9 +35,11 @@ function Navbar() {
         {/* Mobile menu button */}
         <button
           type="button"
-          className="rounded-lg p-2 text-2xl text-gray-700 transition hover:bg-blue-50 hover:text-blue-600 md:hidden"
+          className="ml-3 shrink-0 rounded-lg p-2 text-2xl leading-none text-gray-700 transition hover:bg-blue-50 hover:text-blue-600 md:hidden"
           onClick={() => setMenuOpen(!menuOpen)}
-          aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-label={
+            menuOpen ? "Close navigation menu" : "Open navigation menu"
+          }
           aria-expanded={menuOpen}
         >
           {menuOpen ? "✕" : "☰"}
@@ -98,7 +100,7 @@ function Navbar() {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-lg bg-red-50 px-4 py-2 font-semibold text-red-600 transition hover:bg-red-100"
+                className="rounded-lg bg-red-50 px-4 py-2 text-left font-semibold text-red-600 transition hover:bg-red-100"
               >
                 Logout
               </button>
@@ -129,3 +131,4 @@ function Navbar() {
 }
 
 export default Navbar;
+
